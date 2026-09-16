@@ -3,15 +3,30 @@ import 'package:flutter_application_1/genmodel.dart';
 
 class RemoteService {
 
-  Future<List<Product>?> getProducts() async{
+  Future<Data?> getData(int limit,int skip) async{
     var client = http.Client();
 
-    var uri = Uri.parse('https://dummyjson.com/products?limit=10&skip=10');
+    var uri = Uri.parse('https://dummyjson.com/products?limit=$limit&skip=$skip');
     var response = await client.get(uri);
+    print(response.statusCode);
+    if (response.statusCode == 200){
+      var json = response.body;
+      return dataFromJson(json);
+    }
+  }
+
+  Future<List<Product>?> getProducts(int limit,int skip) async{
+    var client = http.Client();
+
+    var uri = Uri.parse('https://dummyjson.com/products?limit=$limit&skip=$skip');
+    var response = await client.get(uri);
+    print(response.statusCode);
     if (response.statusCode == 200){
       var json = response.body;
       return dataFromJson(json).products;
     }
   }
+
+
 
 }

@@ -57,18 +57,73 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  final ScrollController scrollController = ScrollController();
+
+  Data? cdata;
   List<Product>? products = [];
   var isLoaded = false;
+  int skip = 0;
+  int limit = 20;
+  int? total = 0;
+  int currentpage = 0;
+  double totalpage = 0;
+
 
   @override
   void initState() {
     super.initState();
+    _loadDatas();
+    scrollController.addListener(_loadDataNext);
     //get data from API
-    _loadProducts();
+    
   }
 
-  Future<void> _loadProducts() async {
-    products = await RemoteService().getProducts();
+  Future<void> _loadDatas() async {
+    if (products != null){
+      setState(() => isLoaded = false);
+    } 
+
+    cdata = await RemoteService().getData(limit,skip);
+    total = cdata?.total;
+    if(total! % limit > 0){
+      totalpage = total!/limit + 1;
+    }else{
+      totalpage = total!/limit;
+    }
+    
+    products?.addAll(cdata!.products) ;
+    if (products != null){
+      setState(() => isLoaded = true);
+    } 
+  }
+
+  Future<void> _loadDataNext() async {
+    print('loadNext');
+    // skip = skip+limit;
+    // if(skip < total!){
+      if(scrollController.position.pixels == scrollController.position.maxScrollExtent){
+        currentpage++;
+        skip = skip+limit;
+        if(skip < total!){
+        _loadDatas();
+        }
+      }
+      
+    // }
+    
+  }
+
+  Future<void> _loadDataPrev() async {
+    skip = skip-limit;
+    currentpage--;
+    if(skip >= 0){
+      _loadDatas();
+    }
+  }
+
+  Future<void> _loadProducts(int limit, int skip) async {
+    products = await RemoteService().getProducts(limit,skip);
     if (products != null){
       setState(() => isLoaded = true);
     }
@@ -88,6 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         visible: isLoaded,
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          controller: scrollController,
           scrollDirection: Axis.vertical,
           child: ResponsiveGridView.builder(
           minItemWidth: 120,
@@ -143,6 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ElevatedButton(
                                 onPressed: () {
                                   print("button clicked");
+                                  
                                 },
                                 child: Text(
                                   'Details',
@@ -155,7 +213,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   ] 
                 ),
-              ) 
+              ),
+              
             );
           },
         ),
