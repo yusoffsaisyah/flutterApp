@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/genmodel.dart';
 import 'package:flutter_application_1/remote_service.dart';
+import 'package:responsive_gridview/responsive_gridview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -86,14 +87,79 @@ class _MyHomePageState extends State<MyHomePage> {
           child: CircularProgressIndicator(),
         ),
         visible: isLoaded,
-        child: ListView.builder(
-          itemCount: products?.length,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ResponsiveGridView.builder(
+          minItemWidth: 120,
+          horizontalSpacing: 10,
+          verticalSpacing: 10,
+          itemCount: products!.length,
           itemBuilder: (context, index) {
             return Container(
-              child: Text(products![index].title),
+              width: 120,
+              height: 210,
+              child: Card(
+                color: Colors.white,
+                shadowColor: Colors.grey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: Image.network(
+                        products![index].thumbnail,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    Container(
+                      height: 82,
+                      padding: EdgeInsets.all(5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:[
+                          Container(
+                            child: 
+                              Text(
+                                maxLines: 2,
+                                overflow:TextOverflow.ellipsis,
+                                softWrap: true,
+                                products![index].title, 
+                                style: TextStyle(fontSize: 12),
+                                )
+                          ),
+                          Container(
+                            child: 
+                              Text(
+                                ('RM${products![index].price}'), 
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                          ),
+                      
+                          Container(
+                            height: 15,
+                            child: 
+                              ElevatedButton(
+                                onPressed: () {
+                                  print("button clicked");
+                                },
+                                child: Text(
+                                  'Details',
+                                  style: TextStyle(fontSize: 8)
+                                )
+                              )
+                          )
+                      ],
+                      ),
+                    )
+                  ] 
+                ),
+              ) 
             );
           },
-        ), 
+        ),
+        ),
       ),
     );
   }

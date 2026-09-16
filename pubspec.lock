@@ -155,6 +155,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  responsive_gridview:
+    dependency: "direct main"
+    description:
+      name: responsive_gridview
+      sha256: b9ac0203bbbfd653a1045e231a2f6fbf3dcec6f8214b5b81f844894d06e930a0
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -242,4 +250,4 @@ packages:
     version: "1.1.1"
 sdks:
   dart: ">=3.13.3 <4.0.0"
-  flutter: ">=3.18.0-18.0.pre.54"
+  flutter: ">=3.19.0"
